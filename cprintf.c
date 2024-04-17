@@ -47,26 +47,19 @@ const char *cprintf_print_color(const char *buf)
 		printf("\033[0m");
 	} else if (strcmp(color, "{black}") == 0) {
 		printf("\033[30m");
-	}
-    else if (strcmp(color, "{red}") == 0) {
+	} else if (strcmp(color, "{red}") == 0) {
 		printf("\033[31m");
-	}
-    else if (strcmp(color, "{green}") == 0) {
+	} else if (strcmp(color, "{green}") == 0) {
 		printf("\033[32m");
-	}
-    else if (strcmp(color, "{yellow}") == 0) {
+	} else if (strcmp(color, "{yellow}") == 0) {
 		printf("\033[33m");
-	}
-    else if (strcmp(color, "{blue}") == 0) {
+	} else if (strcmp(color, "{blue}") == 0) {
 		printf("\033[34m");
-	}
-    else if (strcmp(color, "{purple}") == 0) {
+	} else if (strcmp(color, "{purple}") == 0) {
 		printf("\033[35m");
-	}
-    else if (strcmp(color, "{cyan}") == 0) {
+	} else if (strcmp(color, "{cyan}") == 0) {
 		printf("\033[36m");
-	}
-    else if (strcmp(color, "{white}") == 0) {
+	} else if (strcmp(color, "{white}") == 0) {
 		printf("\033[37m");
 	}
 	return ret;
@@ -106,5 +99,5 @@ size_t cprintf_get_bufsize(const char *format, ...)
 			}
 		}
 	}
-	return ret;
+	return ret + 1919;
 }
