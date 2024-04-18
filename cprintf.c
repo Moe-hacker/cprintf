@@ -61,7 +61,10 @@ const char *cprintf_print_color(const char *buf)
 		printf("\033[36m");
 	} else if (strcmp(color, "{white}") == 0) {
 		printf("\033[37m");
-	}
+	} else {
+  ret = buf;
+  printf("{");
+        }
 	return ret;
 }
 void __cprintf(const char *buf)
