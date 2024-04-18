@@ -80,6 +80,7 @@ void __cprintf(const char *buf)
 		i = p - buf;
 		p = &p[1];
 	}
+  printf("\033[0m");
 }
 size_t cprintf_get_bufsize(const char *format, ...)
 {
