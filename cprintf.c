@@ -44,10 +44,9 @@ const char *cprintf_print_color(const char *buf)
 			color[i + 1] = 0;
 			ret = &(buf[i]);
 			break;
-		} else {
-			color[i] = buf[i];
-			color[i + 1] = 0;
 		}
+		color[i] = buf[i];
+		color[i + 1] = 0;
 	}
 	if (strcmp(color, "{clear}") == 0) {
 		printf("\033[0m");
@@ -77,7 +76,7 @@ const char *cprintf_print_color(const char *buf)
 }
 void __cprintf(const char *buf)
 {
-	const char *p;
+	const char *p = NULL;
 	p = buf;
 	for (size_t i = 0; i < strlen(buf); i++) {
 		// Search for '{'.
@@ -88,7 +87,7 @@ void __cprintf(const char *buf)
 			printf("%c", *p);
 		}
 		// Recompute the value of i.
-		i = p - buf;
+		i = (size_t)(p - buf);
 		// Goto the next charactor.
 		p = &(p[1]);
 	}
