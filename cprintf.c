@@ -67,6 +67,8 @@ const char *cprintf_print_color(const char *buf)
 		printf("\033[36m");
 	} else if (strcmp(color, "{white}") == 0) {
 		printf("\033[37m");
+	} else if (strcmp(color, "{base}") == 0) {
+		printf(CPRINTF_BASE_COLOR);
 	} else {
 		ret = buf;
 		printf("{");
@@ -90,6 +92,7 @@ void __cprintf(const char *buf)
 		// Goto the next charactor.
 		p = &(p[1]);
 	}
+	// We will always reset the color in the end.
 	printf("\033[0m");
 }
 size_t cprintf_get_bufsize(const char *format, ...)

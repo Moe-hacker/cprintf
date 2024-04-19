@@ -35,6 +35,8 @@
 void __cprintf(const char *buf);
 size_t cprintf_get_bufsize(const char *format, ...);
 const char *cprintf_print_color(const char *buf);
+// The `base` color.
+#define CPRINTF_BASE_COLOR "\033[1;38;2;254;228;208m"
 /*
  * cprintf() is a macro,
  * first, we get the size of the string to print,
