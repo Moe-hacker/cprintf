@@ -30,13 +30,19 @@
 #include "cprintf.h"
 const char *cprintf_print_color(const char *buf)
 {
+	/*
+	 * Only valid {color} will be recognized,
+	 * and for other '{' without 'color}', we print a '{'.
+	 * we return the pointer to the last character that is
+	 * not recognized as color.
+	 */
 	const char *ret = buf;
 	char color[17] = { '\0' };
 	for (int i = 0; i < 16; i++) {
 		if (buf[i] == '}') {
 			color[i] = buf[i];
 			color[i + 1] = 0;
-			ret = &buf[i];
+			ret = &(buf[i]);
 			break;
 		} else {
 			color[i] = buf[i];
@@ -62,9 +68,9 @@ const char *cprintf_print_color(const char *buf)
 	} else if (strcmp(color, "{white}") == 0) {
 		printf("\033[37m");
 	} else {
-  ret = buf;
-  printf("{");
-        }
+		ret = buf;
+		printf("{");
+	}
 	return ret;
 }
 void __cprintf(const char *buf)
@@ -72,18 +78,26 @@ void __cprintf(const char *buf)
 	const char *p;
 	p = buf;
 	for (size_t i = 0; i < strlen(buf); i++) {
+		// Search for '{'.
 		if (*p == '{') {
+			// *p will be moved because we need to skip the {color} string.
 			p = cprintf_print_color(p);
 		} else {
 			printf("%c", *p);
 		}
+		// Recompute the value of i.
 		i = p - buf;
-		p = &p[1];
+		// Goto the next charactor.
+		p = &(p[1]);
 	}
-  printf("\033[0m");
+	printf("\033[0m");
 }
 size_t cprintf_get_bufsize(const char *format, ...)
 {
+	/*
+	 * Get the size we need to malloc() for the string buffer.
+	 * Note that it will give more extra size to avoid buffer overflow.
+	 */
 	va_list ap;
 	va_start(ap, format);
 	size_t ret = 0;
@@ -95,13 +109,17 @@ size_t cprintf_get_bufsize(const char *format, ...)
 			buf = va_arg(ap, char *);
 			switch (format[i]) {
 			case 's': {
+				// For string, we get the lenth of it.
 				ret += strlen(buf);
 			}
 			default: {
+				// For other format, we use a 114 byte buffer.
+				// If we don't know the number, just use homo way!
 				ret += 114;
 			}
 			}
 		}
 	}
-	return ret + 1919;
+	// The homo way to avoid buffer overflow.
+	return ret + 514;
 }

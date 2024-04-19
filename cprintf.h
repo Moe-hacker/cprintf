@@ -35,6 +35,12 @@
 void __cprintf(const char *buf);
 size_t cprintf_get_bufsize(const char *format, ...);
 const char *cprintf_print_color(const char *buf);
+/*
+ * cprintf() is a macro,
+ * first, we get the size of the string to print,
+ * we use sprintf() to write it to buf[],
+ * so that we only need to parse the string in buf[].
+ */
 #define cprintf(format, ...)                                                 \
 	{                                                                    \
 		char *buf = NULL;                                            \
