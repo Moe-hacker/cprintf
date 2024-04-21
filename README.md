@@ -1,5 +1,7 @@
 # Note:
 `cprintf()` and `cfprintf()` is a macro and will not return anything.       
+# Cprintf in production:
+[ruri](https://github.com/Moe-hacker/ruri)      
 # Usage:
 You can import include/cprintf.h and cprintf.c to your project, and use `cprintf()` and `cfprintf()` just like `printf()` and `fprintf()`.      
 # About color format:
