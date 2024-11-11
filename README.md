@@ -1,3 +1,4 @@
+# Let's make a colorful world!
 # Note:
 `cprintf()` and `cfprintf()` is a macro and will not return anything.       
 # Cprintf in production:
