@@ -370,35 +370,3 @@ void __cfprintf(FILE *_Nonnull stream, const char *_Nonnull buf)
 	fprintf(stream, "\033[0m");
 	fflush(stream);
 }
-size_t cprintf_get_bufsize(const char *_Nonnull format, ...)
-{
-	/*
-	 * Get the size we need to malloc() for the string buffer.
-	 * Note that it will give more extra size to avoid buffer overflow.
-	 */
-	va_list ap;
-	va_start(ap, format);
-	size_t ret = 0;
-	char *buf = NULL;
-	ret += strlen(format);
-	for (size_t i = 0; i < strlen(format); i++) {
-		if (format[i] == '%') {
-			i++;
-			buf = va_arg(ap, char *);
-			switch (format[i]) {
-			case 's': {
-				// For string, we get the lenth of it.
-				ret += strlen(buf);
-				break;
-			}
-			default: {
-				// For other format, we use a 114 byte buffer.
-				// If we don't know the number, just use homo way!
-				ret += 114;
-			}
-			}
-		}
-	}
-	// The homo way to avoid buffer overflow.
-	return ret + 514;
-}
