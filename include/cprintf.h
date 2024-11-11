@@ -43,7 +43,8 @@ void __cprintf(const char *_Nonnull buf);
 void __cfprintf(FILE *_Nonnull stream, const char *_Nonnull buf);
 size_t cprintf_get_bufsize(const char *_Nonnull format, ...);
 // The `base` color.
-#define CPRINTF_BASE_COLOR "\033[1;38;2;254;228;208m"
+#define CPRINTF_BASE_FG_COLOR "\033[1;38;2;254;228;208m"
+#define CPRINTF_BASE_BG_COLOR "\033[1;48;2;254;228;208m"
 /*
  * cprintf() is a macro,
  * first, we get the size of the string to print,
@@ -69,4 +70,4 @@ size_t cprintf_get_bufsize(const char *_Nonnull format, ...);
 		free(__cprintf_buf);                                         \
 	}
 #define CPRINTF_MAJOR 1
-#define CPRINTF_MINOR 1
+#define CPRINTF_MINOR 2

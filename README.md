@@ -8,16 +8,17 @@ You can import include/cprintf.h and cprintf.c to your project, and use `cprintf
 # About color format:
 These color format will be recognized:      
 ```
-{clear}   :reset the color.
-{red}
-{blue}
-{green}
-{yellow}
-{cyan}
-{black}
-{white}
-{purple}
-{base}    :You need to define it.
-{R;G;B}   :RGB color.
+clear   :reset the color.
+red
+blue
+green
+yellow
+cyan
+black
+white
+purple
+base    :You need to define it.
+R;G;B   :RGB color.
 ```
+Use `{color}` for foreground color and `[color]` for background color.
 Note that cprintf() will always clear the color in the end once you call it.
