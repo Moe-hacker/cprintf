@@ -43,7 +43,7 @@ static void print_rgb_fg_color(const char *_Nonnull color)
 		buf[i - 1] = color[i];
 		buf[i] = 0;
 	}
-	printf("\033[1;38;2;%sm", buf);
+	printf("\033[38;2;%sm", buf);
 }
 static void fprint_rgb_fg_color(FILE *_Nonnull stream, const char *_Nonnull color)
 {
@@ -55,7 +55,7 @@ static void fprint_rgb_fg_color(FILE *_Nonnull stream, const char *_Nonnull colo
 		buf[i - 1] = color[i];
 		buf[i] = 0;
 	}
-	fprintf(stream, "\033[1;38;2;%sm", buf);
+	fprintf(stream, "\033[38;2;%sm", buf);
 }
 static void print_rgb_bg_color(const char *_Nonnull color)
 {
@@ -67,7 +67,7 @@ static void print_rgb_bg_color(const char *_Nonnull color)
 		buf[i - 1] = color[i];
 		buf[i] = 0;
 	}
-	printf("\033[1;48;2;%sm", buf);
+	printf("\033[48;2;%sm", buf);
 }
 static void fprint_rgb_bg_color(FILE *_Nonnull stream, const char *_Nonnull color)
 {
@@ -79,7 +79,7 @@ static void fprint_rgb_bg_color(FILE *_Nonnull stream, const char *_Nonnull colo
 		buf[i - 1] = color[i];
 		buf[i] = 0;
 	}
-	fprintf(stream, "\033[1;48;2;%sm", buf);
+	fprintf(stream, "\033[48;2;%sm", buf);
 }
 static bool is_rgb_color(const char *_Nonnull color)
 {
@@ -154,6 +154,10 @@ static const char *cfprintf_print_fg_color(FILE *_Nonnull stream, const char *_N
 		fprintf(stream, "\033[37m");
 	} else if (strcmp(color, "{base}") == 0) {
 		fprintf(stream, "%s", CPRINTF_BASE_FG_COLOR);
+	} else if (strcmp(color, "{underline}") == 0) {
+		fprintf(stream, "\033[4m");
+	} else if (strcmp(color, "{highlight}") == 0) {
+		fprintf(stream, "\033[1m");
 	} else if (is_rgb_color(color)) {
 		fprint_rgb_fg_color(stream, color);
 	} else {
@@ -202,6 +206,10 @@ static const char *cprintf_print_fg_color(const char *_Nonnull buf)
 		printf("\033[37m");
 	} else if (strcmp(color, "{base}") == 0) {
 		printf("%s", CPRINTF_BASE_FG_COLOR);
+	} else if (strcmp(color, "{underline}") == 0) {
+		printf("\033[4m");
+	} else if (strcmp(color, "{highlight}") == 0) {
+		printf("\033[1m");
 	} else if (is_rgb_color(color)) {
 		print_rgb_fg_color(color);
 	} else {
@@ -250,6 +258,10 @@ static const char *cfprintf_print_bg_color(FILE *_Nonnull stream, const char *_N
 		fprintf(stream, "\033[47m");
 	} else if (strcmp(color, "[base]") == 0) {
 		fprintf(stream, "%s", CPRINTF_BASE_BG_COLOR);
+	} else if (strcmp(color, "[underline]") == 0) {
+		fprintf(stream, "\033[4m");
+	} else if (strcmp(color, "[highlight]") == 0) {
+		fprintf(stream, "\033[1m");
 	} else if (is_rgb_color(color)) {
 		fprint_rgb_bg_color(stream, color);
 	} else {
@@ -298,6 +310,10 @@ static const char *cprintf_print_bg_color(const char *_Nonnull buf)
 		printf("\033[47m");
 	} else if (strcmp(color, "[base]") == 0) {
 		printf("%s", CPRINTF_BASE_BG_COLOR);
+	} else if (strcmp(color, "[underline]") == 0) {
+		printf("\033[4m");
+	} else if (strcmp(color, "[highlight]") == 0) {
+		printf("\033[1m");
 	} else if (is_rgb_color(color)) {
 		print_rgb_bg_color(color);
 	} else {

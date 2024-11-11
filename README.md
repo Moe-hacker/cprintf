@@ -8,7 +8,9 @@ You can import include/cprintf.h and cprintf.c to your project, and use `cprintf
 # About color format:
 These color format will be recognized:      
 ```
-clear   :reset the color.
+clear     :reset the color.
+underline :underline
+highlight :highlight
 red
 blue
 green
@@ -17,20 +19,12 @@ cyan
 black
 white
 purple
-base    :You need to define it.
-R;G;B   :RGB color.
+base      :You need to define it.
+R;G;B     :RGB color.
 ```
 Use `{color}` for foreground color and `[color]` for background color.
 Note that cprintf() will always clear the color in the end once you call it, but for background color, you need a `[clear]` before `\n`.      
 # Example:
 ```C
-#include "include/cprintf.h"
-int main()
-{
-	cprintf("[91;207;250]                [clear]\n");
-	cprintf("[245;170;185]                [clear]\n");
-	cprintf("[255;255;255]                [clear]\n");
-	cprintf("[245;170;185]                [clear]\n");
-	cprintf("[91;207;250]                [clear]\n");
-}
+nano
 ```
