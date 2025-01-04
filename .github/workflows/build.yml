@@ -1,0 +1,103 @@
+name: Build release
+
+on:
+  workflow_dispatch:
+    inputs:
+      cprintf_version:
+        description: "Optional: cprintf version to use as tag_name (leave blank to use the latest remote version)"
+        required: false
+      release_name:
+        description: "Optional: Custom release name (cprintf v* release)"
+        required: false
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'src/**'
+      - 'build/**'
+      - 'configure'
+      - 'Makefile'
+  pull_request:
+
+jobs:
+  check_update:
+    name: Check update
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check latest version
+        id: check_version
+        run: |
+          remote_version=$(curl -L https://api.github.com/repos/Moe-hacker/cprintf/releases/latest | jq -r .tag_name)
+          remote_name=$(curl -L https://api.github.com/repos/Moe-hacker/cprintf/releases/latest | jq -r .name)
+          echo "remote_version=$remote_version" | tee -a $GITHUB_OUTPUT
+          echo "remote_name=$remote_name" | tee -a $GITHUB_OUTPUT
+    outputs:
+      remote_version: ${{ steps.check_version.outputs.remote_version }}
+      remote_name: ${{ steps.check_version.outputs.remote_name }}
+
+  build:
+    name: Build
+    needs: check_update
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Set env
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            if [ -n "${{ github.event.inputs.cprintf_version }}" ]; then
+              echo "version=${{ github.event.inputs.cprintf_version }}" | tee -a $GITHUB_ENV
+            else
+              echo "version=${{ needs.check_update.outputs.remote_version }}" | tee -a $GITHUB_ENV
+            fi
+
+            if [ -n "${{ github.event.inputs.release_name }}" ]; then
+              echo "release_name=${{ github.event.inputs.release_name }}" | tee -a $GITHUB_ENV
+            elif [ -n "${{ github.event.inputs.cprintf_version }}" ]; then
+              echo "release_name=${{ github.event.inputs.cprintf_version }}" | tee -a $GITHUB_ENV
+            else
+              echo "release_name=${{ needs.check_update.outputs.remote_name }}" | tee -a $GITHUB_ENV
+            fi
+          else
+            echo "version=${{ needs.check_update.outputs.remote_version }}" | tee -a $GITHUB_ENV
+            echo "release_name=${{ needs.check_update.outputs.remote_name }}" | tee -a $GITHUB_ENV
+          fi
+          echo "build_time=$(TZ=Asia/Shanghai date '+%Y%m%d%H%M')" | tee -a $GITHUB_ENV
+
+      - uses: actions/checkout@v4
+      - name: Build-Release
+        run: |
+          cd build
+          sudo bash build-all.sh
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.version }}
+          name: ${{ env.release_name }}
+          body: |
+            This is cprintf binary release.
+            NOTE:
+            *-noupx means the binary is not upx compressed.
+            cprintf use musl as libc to build by default (in alpine container), for smaller binary size and better security.
+            But since I didn't found way to get stable musl container image for loongarch64, the binary for loongarch64 is built with glibc in debian.
+            Build time: ${{ env.build_time }}
+          prerelease: false
+          files: |
+            ${{ github.workspace }}/x86_64.tar
+            ${{ github.workspace }}/i386.tar
+            ${{ github.workspace }}/s390x.tar
+            ${{ github.workspace }}/ppc64le.tar
+            ${{ github.workspace }}/loongarch64.tar
+            ${{ github.workspace }}/armv7.tar
+            ${{ github.workspace }}/armhf.tar
+            ${{ github.workspace }}/aarch64.tar
+            ${{ github.workspace }}/riscv64.tar
+            ${{ github.workspace }}/x86_64-noupx.tar
+            ${{ github.workspace }}/i386-noupx.tar
+            ${{ github.workspace }}/s390x-noupx.tar
+            ${{ github.workspace }}/ppc64le-noupx.tar
+            ${{ github.workspace }}/armv7-noupx.tar
+            ${{ github.workspace }}/armhf-noupx.tar
+            ${{ github.workspace }}/aarch64-noupx.tar
+            ${{ github.workspace }}/riscv64-noupx.tar
+
