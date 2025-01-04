@@ -1,4 +1,11 @@
 # Let's make a colorful world!
+# What's this?
+We often use ASCII color like `\033[0m` when developing. But it's hard to remember them.          
+When writing shell, we can use `CLEAR='\033[0m'`, but for C, I have to write the implementation myself.       
+So I use `{color}` for text color and `[color]` for background color, and make them map to print the color, that's this project. Simple, stupid, maybe a bit useless.
+I use it to format output in my program.        
+# About the binary:
+You can just use cprintf as a modified version of "echo -ne" with the color format support. If the color in `{}` or `[]` is not recognized, it will just output the original string.        
 # Note:
 `cprintf()` and `cfprintf()` is a macro and will not return anything.       
 # Cprintf in production:
@@ -36,3 +43,12 @@ int main()
 	cprintf("[91;207;250]                [clear]\n");
 }
 ```
+<p align="center">何もない僕たちに</p>
+<p align="center">なぜ夢を見させたか</p>
+<p align="center">終わりある人生に</p>
+<p align="center">なぜ希望を持たせたか</p>
+<p align="center">なぜこの手をすり抜ける</p>
+<p align="center">ものばかり与えたか</p>
+<p align="center">それでもなおしがみつく</p>
+<p align="center">僕らは醜いかい</p>
+<p align="center">それとも、きれいかい</p>
