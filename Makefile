@@ -1,4 +1,8 @@
+-include config.mk
+all :
+	$(CC) $(CFLAGS) cprintf.c main.c -o cprintf
+	$(STRIP) cprintf
 format :
-	clang-format -i include/cprintf.h cprintf.c test.c
+	clang-format -i include/cprintf.h cprintf.c test.c main.c
 test :
-	cc -O0 -ggdb -fsanitize=address cprintf.c test.c
+	$(CC) -O0 -ggdb -fsanitize=address cprintf.c test.c
