@@ -28,7 +28,7 @@
  *
  */
 #include "include/cprintf.h"
-static char *__cprintf_parse(const char *_Nonnull buf)
+static char *cprintf_parse__(const char *_Nonnull buf)
 {
 	char *ret = malloc(strlen(buf) + 114);
 	ret[0] = '\0';
@@ -74,16 +74,16 @@ static char *__cprintf_parse(const char *_Nonnull buf)
 	}
 	return ret;
 }
-static void __cprintf__(const char *_Nonnull buf)
+static void do_cprintf__(const char *_Nonnull buf)
 {
-	char *__buf = __cprintf_parse(buf);
+	char *__buf = cprintf_parse__(buf);
 	cprintf("%s", __buf);
 	free(__buf);
 }
 int main(int argc, char **argv)
 {
 	for (int i = 1; i < argc; i++) {
-		__cprintf__(argv[i]);
+		do_cprintf__(argv[i]);
 		if (i < argc - 1) {
 			printf(" ");
 		}

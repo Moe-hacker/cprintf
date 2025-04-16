@@ -17,7 +17,7 @@ sudo apt install qemu-user-static pkg-config libglib2.0-dev qemu-system-misc pyt
 # Build qemu-loongarch64
 git clone https://github.com/qemu/qemu.git
 cd qemu
-./configure --static --disable-system --target-list=loongarch64-linux-user
+./gen-config --static --disable-system --target-list=loongarch64-linux-user
 make -j$(nproc)
 sudo cp build/loongarch64-linux-user/qemu-loongarch64 /usr/bin/qemu-loongarch64-static
 sudo cp build/qemu-loongarch64 /usr/bin/qemu-loongarch64-static

@@ -8,7 +8,7 @@ mkdir output
 mkdir output2
 git clone https://github.com/moe-hacker/cprintf
 cd cprintf
-./configure -s
+./gen-config -s
 make
 strip cprintf
 cp cprintf ../output2/cprintf

@@ -1,4 +1,7 @@
--include config.mk
+ifeq ($(wildcard config.mk),)
+$(error config.mk is missing. Please run gen-config step before building.)
+endif
+include config.mk
 all :
 	$(CC) $(CFLAGS) cprintf.c main.c -o cprintf
 	$(STRIP) cprintf

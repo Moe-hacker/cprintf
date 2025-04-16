@@ -14,7 +14,7 @@ on:
     paths:
       - 'src/**'
       - 'build/**'
-      - 'configure'
+      - 'gen-config'
       - 'Makefile'
   pull_request:
 

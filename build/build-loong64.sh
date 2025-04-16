@@ -8,7 +8,7 @@ apt install -y wget make clang git libseccomp-dev libcap-dev libc-dev binutils
 apt install -y upx
 git clone https://github.com/moe-hacker/cprintf
 cd cprintf
-./configure -s
+./gen-config -s
 make
 strip cprintf
 tar -cvf ../loong64.tar ./cprintf ./LICENSE
