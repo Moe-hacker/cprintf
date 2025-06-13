@@ -1,3 +1,13 @@
+# New in v2.0:
+Say hello to `T()` `F()` macro with _Generic() support!      
+Usage:
+```C
+int i = 0;
+cprintf("{}\n", T(i)); // Equal to printf("%d\n", i);
+cprintf("{}\n", F(i,"06")); // Equal to printf("%06d\n", i);
+```
+And, now we have `csprintf()`, it supports T() F() but don't support color.      
+On linux, cprintf() and cfprintf() will auto disable color when output to a pipe.            
 # Let's make a colorful world!
 # What's this?
 We often use ASCII color like `\033[0m` when developing. But it's hard to remember them.          

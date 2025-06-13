@@ -28,8 +28,294 @@
  *
  */
 #include "include/cprintf.h"
+#define cprintf_strlen(f) (f == NULL ? 0 : strlen(f))
+#define cprintf_avoid_null(f) (f == NULL ? "" : f)
+#define cprintf_buf_len(f, d) (f != NULL ? (size_t)snprintf(NULL, 0, f, d) : 0)
+static char **cprintf_buffer = NULL;
+static size_t cprintf_buf_count = 0;
+static void cprintf_mark_buf(char *b)
+{
+	cprintf_buffer = realloc(cprintf_buffer, (cprintf_buf_count + 1) * sizeof(char *));
+	cprintf_buffer[cprintf_buf_count] = b;
+	cprintf_buf_count++;
+}
+void cprintf_free_buf(void)
+{
+	for (size_t i = 0; i < cprintf_buf_count; i++) {
+		free(cprintf_buffer[i]);
+	}
+	free(cprintf_buffer);
+	cprintf_buffer = NULL;
+	cprintf_buf_count = 0;
+}
+char *cprintf_regen_format(const char *f)
+{
+	char *ret = strdup(cprintf_avoid_null(f));
+	int j = 0;
+	size_t len = cprintf_strlen(f);
+	if (len == 0) {
+		cprintf_mark_buf(ret);
+		return ret;
+	}
+	for (size_t i = 0; i < len - 1; i++) {
+		if (f[i] == '{' && f[i + 1] == '}') {
+			ret[j] = '%';
+			ret[j + 1] = 's';
+			j += 2;
+			i++;
+		} else {
+			ret[j] = f[i];
+			j++;
+		}
+	}
+	ret[j] = '\0';
+	if (f[len - 1] != '}') {
+		ret[j] = f[len - 1];
+		ret[j + 1] = '\0';
+	}
+	cprintf_mark_buf(ret);
+	return ret;
+}
+char *cprintf_get_fmt_unknown(const char *f)
+{
+	(void)f; // Unused parameter
+	return NULL;
+}
+char *cprintf_get_fmt_bool(const char *f)
+{
+	(void)f; // Unused parameter
+	return NULL;
+}
+char *cprintf_get_fmt_char(const char *f)
+{
+	char *b = malloc(cprintf_strlen(f) + 16);
+	sprintf(b, "%%%sc", cprintf_avoid_null(f));
+	return b;
+}
+char *cprintf_get_fmt_schar(const char *f)
+{
+	char *b = malloc(cprintf_strlen(f) + 16);
+	sprintf(b, "%%%sd", cprintf_avoid_null(f));
+	return b;
+}
+char *cprintf_get_fmt_uchar(const char *f)
+{
+	char *b = malloc(cprintf_strlen(f) + 16);
+	sprintf(b, "%%%sd", cprintf_avoid_null(f));
+	return b;
+}
+char *cprintf_get_fmt_short(const char *f)
+{
+	char *b = malloc(cprintf_strlen(f) + 16);
+	sprintf(b, "%%%shd", cprintf_avoid_null(f));
+	return b;
+}
+char *cprintf_get_fmt_ushort(const char *f)
+{
+	char *b = malloc(cprintf_strlen(f) + 16);
+	sprintf(b, "%%%shu", cprintf_avoid_null(f));
+	return b;
+}
+char *cprintf_get_fmt_int(const char *f)
+{
+	char *b = malloc(cprintf_strlen(f) + 16);
+	sprintf(b, "%%%sd", cprintf_avoid_null(f));
+	return b;
+}
+char *cprintf_get_fmt_uint(const char *f)
+{
+	char *b = malloc(cprintf_strlen(f) + 16);
+	sprintf(b, "%%%su", cprintf_avoid_null(f));
+	return b;
+}
+char *cprintf_get_fmt_long(const char *f)
+{
+	char *b = malloc(cprintf_strlen(f) + 16);
+	sprintf(b, "%%%sld", cprintf_avoid_null(f));
+	return b;
+}
+char *cprintf_get_fmt_ulong(const char *f)
+{
+	char *b = malloc(cprintf_strlen(f) + 16);
+	sprintf(b, "%%%slu", cprintf_avoid_null(f));
+	return b;
+}
+char *cprintf_get_fmt_llong(const char *f)
+{
+	char *b = malloc(cprintf_strlen(f) + 16);
+	sprintf(b, "%%%slld", cprintf_avoid_null(f));
+	return b;
+}
+char *cprintf_get_fmt_ullong(const char *f)
+{
+	char *b = malloc(cprintf_strlen(f) + 16);
+	sprintf(b, "%%%sllu", cprintf_avoid_null(f));
+	return b;
+}
+char *cprintf_get_fmt_float(const char *f)
+{
+	char *b = malloc(cprintf_strlen(f) + 16);
+	sprintf(b, "%%%sf", cprintf_avoid_null(f));
+	return b;
+}
+char *cprintf_get_fmt_double(const char *f)
+{
+	char *b = malloc(cprintf_strlen(f) + 16);
+	sprintf(b, "%%%sf", cprintf_avoid_null(f));
+	return b;
+}
+char *cprintf_get_fmt_ldouble(const char *f)
+{
+	char *b = malloc(cprintf_strlen(f) + 16);
+	sprintf(b, "%%%sLf", cprintf_avoid_null(f));
+	return b;
+}
+char *cprintf_get_fmt_ptr(const char *f)
+{
+	char *b = malloc(cprintf_strlen(f) + 16);
+	sprintf(b, "%%%sp", cprintf_avoid_null(f));
+	return b;
+}
+
+char *cprintf_get_string_bool(char *f, bool d)
+{
+	char *buf = malloc(32);
+	sprintf(buf, "%s", d ? "true" : "false");
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
+char *cprintf_get_string_char(char *f, char d)
+{
+	char *buf = malloc(cprintf_buf_len(f, d) + 32);
+	sprintf(buf, f, d);
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
+char *cprintf_get_string_schar(char *f, signed char d)
+{
+	char *buf = malloc(cprintf_buf_len(f, d) + 32);
+	sprintf(buf, f, d);
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
+char *cprintf_get_string_uchar(char *f, unsigned char d)
+{
+	char *buf = malloc(cprintf_buf_len(f, d) + 32);
+	sprintf(buf, f, d);
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
+char *cprintf_get_string_short(char *f, short d)
+{
+	char *buf = malloc(cprintf_buf_len(f, d) + 32);
+	sprintf(buf, f, d);
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
+char *cprintf_get_string_ushort(char *f, unsigned short d)
+{
+	char *buf = malloc(cprintf_buf_len(f, d) + 32);
+	sprintf(buf, f, d);
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
+char *cprintf_get_string_int(char *f, int d)
+{
+	char *buf = malloc(cprintf_buf_len(f, d) + 32);
+	sprintf(buf, f, d);
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
+char *cprintf_get_string_uint(char *f, unsigned int d)
+{
+	char *buf = malloc(cprintf_buf_len(f, d) + 32);
+	sprintf(buf, f, d);
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
+char *cprintf_get_string_long(char *f, long d)
+{
+	char *buf = malloc(cprintf_buf_len(f, d) + 32);
+	sprintf(buf, f, d);
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
+char *cprintf_get_string_ulong(char *f, unsigned long d)
+{
+	char *buf = malloc(cprintf_buf_len(f, d) + 32);
+	sprintf(buf, f, d);
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
+char *cprintf_get_string_llong(char *f, long long d)
+{
+	char *buf = malloc(cprintf_buf_len(f, d) + 32);
+	sprintf(buf, f, d);
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
+char *cprintf_get_string_ullong(char *f, unsigned long long d)
+{
+	char *buf = malloc(cprintf_buf_len(f, d) + 32);
+	sprintf(buf, f, d);
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
+char *cprintf_get_string_float(char *f, float d)
+{
+	char *buf = malloc(cprintf_buf_len(f, d) + 32);
+	sprintf(buf, f, d);
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
+char *cprintf_get_string_double(char *f, double d)
+{
+	char *buf = malloc(cprintf_buf_len(f, d) + 32);
+	sprintf(buf, f, d);
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
+char *cprintf_get_string_ldouble(char *f, long double d)
+{
+	char *buf = malloc(cprintf_buf_len(f, d) + 32);
+	sprintf(buf, f, d);
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
+char *cprintf_get_string_ptr(char *f, void *d)
+{
+	char *buf = malloc(cprintf_buf_len(f, d) + 32);
+	sprintf(buf, f, d);
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
+char *cprintf_get_string_unknown(char *f, ...)
+{
+	char *buf = malloc(32);
+	sprintf(buf, "%s", "{unknown type}");
+	free(f);
+	cprintf_mark_buf(buf);
+	return buf;
+}
 char *cprintf_base_color = "254;228;208";
 bool cprintf_print_color_if_not_fifo = true;
+#ifdef _GNU_SOURCE
 #define fprintf_if_not_fifo(stream, ...)                                                              \
 	{                                                                                             \
 		if (!cprintf_print_color_if_not_fifo) {                                               \
@@ -41,6 +327,9 @@ bool cprintf_print_color_if_not_fifo = true;
 			}                                                                             \
 		}                                                                                     \
 	}
+#else
+#define fprintf_if_not_fifo(stream, ...) fprintf(stream, __VA_ARGS__)
+#endif
 static void fprint_rgb_fg_color(FILE *_Nonnull stream, const char *_Nonnull color)
 {
 	/*
@@ -223,7 +512,7 @@ void cprintf__(const char *_Nonnull buf)
 		p = &(p[1]);
 	}
 	// We will always reset the color in the end.
-	printf("\033[0m");
+	fprintf_if_not_fifo(stdout, "\033[0m");
 	fflush(stdout);
 }
 void cfprintf__(FILE *_Nonnull stream, const char *_Nonnull buf)

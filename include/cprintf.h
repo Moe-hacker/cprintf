@@ -28,6 +28,9 @@
  *
  */
 #pragma once
+#ifdef __linux__
+#define _GNU_SOURCE
+#endif
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
@@ -48,41 +51,115 @@
 #endif
 void cprintf__(const char *_Nonnull buf);
 void cfprintf__(FILE *_Nonnull stream, const char *_Nonnull buf);
-// Get the size of the string to print.
-// We give another 514 bytes to avoid buffer overflow.
-// We call snprintf() twice, but never mind, it's fast enough.
-#define cprintf_get_bufsize__(format, ...) (snprintf(NULL, 0, format, ##__VA_ARGS__) > 0 ? (size_t)snprintf(NULL, 0, format, ##__VA_ARGS__) + 514 : 514)
 // The `base` color.
 extern char *cprintf_base_color;
 // Do not print color if the stream is a FIFO.
 extern bool cprintf_print_color_if_not_fifo;
-/*
- * cprintf() is a macro,
- * first, we get the size of the string to print,
- * we use sprintf() to write it to buf[],
- * so that we only need to parse the string in buf[].
- */
-#define cprintf(format, ...)                                                   \
-	{                                                                      \
-		char *cprintf_buf__ = NULL;                                    \
-		size_t bufsize = cprintf_get_bufsize__(format, ##__VA_ARGS__); \
-		if (bufsize != 0) {                                            \
-			cprintf_buf__ = malloc(bufsize);                       \
-			sprintf(cprintf_buf__, format, ##__VA_ARGS__);         \
-			cprintf__(cprintf_buf__);                              \
-			free(cprintf_buf__);                                   \
-		}                                                              \
+#define cprintf_get_fmt_(d, f)                              \
+	_Generic((d),                                       \
+		_Bool: cprintf_get_fmt_bool,                \
+		char: cprintf_get_fmt_char,                 \
+		signed char: cprintf_get_fmt_schar,         \
+		unsigned char: cprintf_get_fmt_uchar,       \
+		short: cprintf_get_fmt_short,               \
+		unsigned short: cprintf_get_fmt_ushort,     \
+		int: cprintf_get_fmt_int,                   \
+		unsigned int: cprintf_get_fmt_uint,         \
+		long: cprintf_get_fmt_long,                 \
+		unsigned long: cprintf_get_fmt_ulong,       \
+		long long: cprintf_get_fmt_llong,           \
+		unsigned long long: cprintf_get_fmt_ullong, \
+		float: cprintf_get_fmt_float,               \
+		double: cprintf_get_fmt_double,             \
+		long double: cprintf_get_fmt_ldouble,       \
+		void *: cprintf_get_fmt_ptr,                \
+		default: cprintf_get_fmt_unknown)(f)
+
+#define cprintf_to_char(d, f)                                  \
+	_Generic((d),                                          \
+		_Bool: cprintf_get_string_bool,                \
+		char: cprintf_get_string_char,                 \
+		signed char: cprintf_get_string_schar,         \
+		unsigned char: cprintf_get_string_uchar,       \
+		short: cprintf_get_string_short,               \
+		unsigned short: cprintf_get_string_ushort,     \
+		int: cprintf_get_string_int,                   \
+		unsigned int: cprintf_get_string_uint,         \
+		long: cprintf_get_string_long,                 \
+		unsigned long: cprintf_get_string_ulong,       \
+		long long: cprintf_get_string_llong,           \
+		unsigned long long: cprintf_get_string_ullong, \
+		float: cprintf_get_string_float,               \
+		double: cprintf_get_string_double,             \
+		long double: cprintf_get_string_ldouble,       \
+		void *: cprintf_get_string_ptr,                \
+		default: cprintf_get_string_unknown)(f, d)
+
+#define F(data, format) cprintf_to_char(data, cprintf_get_fmt_(data, format))
+#define T(data) F(data, NULL)
+#define cprintf_len(format, ...) (snprintf(NULL, 0, cprintf_regen_format(format), __VA_ARGS__) + 8)
+#define csprintf(string, format, ...)                             \
+	{                                                         \
+		if (format == NULL) {                             \
+			sprintf(string, "%s", "(null)");          \
+		} else {                                          \
+			char *fmt = cprintf_regen_format(format); \
+			sprintf(string, fmt, __VA_ARGS__);        \
+			cprintf_free_buf();                       \
+		}                                                 \
 	}
-#define cfprintf(stream, format, ...)                                          \
-	{                                                                      \
-		char *cprintf_buf__ = NULL;                                    \
-		size_t bufsize = cprintf_get_bufsize__(format, ##__VA_ARGS__); \
-		if (bufsize != 0) {                                            \
-			cprintf_buf__ = malloc(bufsize);                       \
-			sprintf(cprintf_buf__, format, ##__VA_ARGS__);         \
-			cfprintf__(stream, cprintf_buf__);                     \
-			free(cprintf_buf__);                                   \
-		}                                                              \
+#define cprintf(format, ...)                                          \
+	{                                                             \
+		char *buf = malloc(cprintf_len(format, __VA_ARGS__)); \
+		csprintf(buf, format, __VA_ARGS__);                   \
+		cprintf__(buf);                                       \
+		free(buf);                                            \
 	}
-#define CPRINTF_MAJOR 1
-#define CPRINTF_MINOR 5
+#define cfprintf(stream, format, ...)                                 \
+	{                                                             \
+		char *buf = malloc(cprintf_len(format, __VA_ARGS__)); \
+		csprintf(buf, format, __VA_ARGS__);                   \
+		cfprintf__(stream, buf);                              \
+		free(buf);                                            \
+	}
+//
+char *cprintf_regen_format(const char *f);
+void cprintf_free_buf(void);
+//
+char *cprintf_get_fmt_char(const char *f);
+char *cprintf_get_fmt_schar(const char *f);
+char *cprintf_get_fmt_uchar(const char *f);
+char *cprintf_get_fmt_short(const char *f);
+char *cprintf_get_fmt_ushort(const char *f);
+char *cprintf_get_fmt_int(const char *f);
+char *cprintf_get_fmt_uint(const char *f);
+char *cprintf_get_fmt_long(const char *f);
+char *cprintf_get_fmt_ulong(const char *f);
+char *cprintf_get_fmt_llong(const char *f);
+char *cprintf_get_fmt_ullong(const char *f);
+char *cprintf_get_fmt_float(const char *f);
+char *cprintf_get_fmt_double(const char *f);
+char *cprintf_get_fmt_ldouble(const char *f);
+char *cprintf_get_fmt_ptr(const char *f);
+char *cprintf_get_fmt_unknown(const char *f);
+char *cprintf_get_fmt_bool(const char *f);
+//
+char *cprintf_get_string_bool(char *f, bool d);
+char *cprintf_get_string_char(char *f, char d);
+char *cprintf_get_string_schar(char *f, signed char d);
+char *cprintf_get_string_uchar(char *f, unsigned char d);
+char *cprintf_get_string_short(char *f, short d);
+char *cprintf_get_string_ushort(char *f, unsigned short d);
+char *cprintf_get_string_int(char *f, int d);
+char *cprintf_get_string_uint(char *f, unsigned int d);
+char *cprintf_get_string_long(char *f, long d);
+char *cprintf_get_string_ulong(char *f, unsigned long d);
+char *cprintf_get_string_llong(char *f, long long d);
+char *cprintf_get_string_ullong(char *f, unsigned long long d);
+char *cprintf_get_string_float(char *f, float d);
+char *cprintf_get_string_double(char *f, double d);
+char *cprintf_get_string_ldouble(char *f, long double d);
+char *cprintf_get_string_ptr(char *f, void *d);
+char *cprintf_get_string_unknown(char *f, ...);
+#define CPRINTF_MAJOR 2
+#define CPRINTF_MINOR 0
