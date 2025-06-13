@@ -7,7 +7,7 @@ cprintf("{}\n", T(i)); // Equal to printf("%d\n", i);
 cprintf("{}\n", F(i,"06")); // Equal to printf("%06d\n", i);
 ```
 And, now we have `csprintf()`, it supports T() F() but don't support color.      
-On linux, cprintf() and cfprintf() will auto disable color when output to a pipe.            
+On linux, cprintf() and cfprintf() will auto disable color when output is not tty.            
 # Warning:
 cprintf is not more secure than printf(), and, please always use unchangable format string and make sure there's not extra {}!      
 For example:

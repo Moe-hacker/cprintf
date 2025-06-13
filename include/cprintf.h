@@ -54,7 +54,7 @@ void cfprintf__(FILE *_Nonnull stream, const char *_Nonnull buf);
 // The `base` color.
 extern char *cprintf_base_color;
 // Do not print color if the stream is a FIFO.
-extern bool cprintf_print_color_if_not_fifo;
+extern bool cprintf_print_color_only_tty;
 #define cprintf_get_fmt_(d, f)                              \
 	_Generic((d),                                       \
 		_Bool: cprintf_get_fmt_bool,                \
