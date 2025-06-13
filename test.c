@@ -56,14 +56,6 @@ int main(void)
 		114514,
 		"efbwevohaerhgkvfewugfagawhlgfigriywgjvwejhciwgihegjyvwrisavclhhahscvhvahwhjvbewvcjhkcvheqivchkvkhcbiqhbcjkqbkhbqhbhlecbqlehvhqwbvkhbkhlbvkbvljahbkhcvbklvbkbabehkavbkahbvkhavbakhebekjabhhgvcuiweryiagvhgweyhgviyacwhgvlyiwgviywgy[base]ihlwgiyywhgviywgyiwgcjtycujgcjuttugggggggukkuyu[clear]tyktfytgfyyfuktggfllyryhgwygyiwryrwyiyirliaiirwyayiwg[]iy[rryiirr[yhiho]ijoviho[11;45;14]iwhow[1919810]e[191;9;810]oweh[clear]",
 		514);
-	struct {
-		int t;
-	} d = {
-		.t = 0,
-	};
-	cprintf("cprintf: %s\n", "d");
-	cprintf("got: {} {} {} {}  {} {} {} {} {} {} {} {} {} {} {} {}\n", T(d), T(d), T(d), T(d), T(d), T(d),
-		T(d), T(d), T(d), T(d), T(d), T(d), T(d), T(d), T(d), T(d));
 	cprintf("cprintf: %s\n", "(_Bool)1");
 	cprintf("got: {}\n", T((_Bool)1));
 	cprintf("cprintf: %s\n", "(char)'A'");
@@ -106,4 +98,5 @@ int main(void)
 	int i = 0;
 	cprintf("{}\n", T(i));
 	cprintf("{}\n", "{}{}{}{}");
+	cprintf("END\n");
 }

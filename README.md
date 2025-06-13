@@ -17,6 +17,8 @@ cprintf("{}{}{}{}","xxxxx"); // Also boom!!!!!!
 printf("%s","xxxxx"); // Good!
 cprintf("{}","xxxxxx"); // Also good :)
 ```
+# About GNU C:
+cprintf uses GNU C11, port/cprintf.c is in pure C std.     
 # Let's make a colorful world!
 # What's this?
 We often use ASCII color like `\033[0m` when developing. But it's hard to remember them.          
