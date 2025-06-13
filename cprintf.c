@@ -31,8 +31,8 @@
 #define cprintf_strlen(f) (f == NULL ? 0 : strlen(f))
 #define cprintf_avoid_null(f) (f == NULL ? "" : f)
 #define cprintf_buf_len(f, d) (f != NULL ? (size_t)snprintf(NULL, 0, f, d) : 0)
-static char **cprintf_buffer = NULL;
-static size_t cprintf_buf_count = 0;
+static thread_local char **cprintf_buffer = NULL;
+static thread_local size_t cprintf_buf_count = 0;
 static void cprintf_mark_buf(char *b)
 {
 	cprintf_buffer = realloc(cprintf_buffer, (cprintf_buf_count + 1) * sizeof(char *));

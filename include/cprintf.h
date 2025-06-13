@@ -38,6 +38,7 @@
 #include <stdarg.h>
 #include <ctype.h>
 #include <sys/stat.h>
+#include <threads.h>
 #ifndef _Nullable
 #define _Nullable
 #endif
