@@ -99,4 +99,6 @@ int main(void)
 	cprintf("{}\n", T(i));
 	cprintf("{}\n", "{}{}{}{}");
 	cprintf("END\n");
+	cprintf("{}{}{}\n");
+	cprintf("{}{}{}{}{}{}{}\n", "x", T(1));
 }

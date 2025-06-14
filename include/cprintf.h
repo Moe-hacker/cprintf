@@ -39,6 +39,7 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <threads.h>
+#include <stdint.h>
 #ifndef _Nullable
 #define _Nullable
 #endif
@@ -100,18 +101,28 @@ extern bool cprintf_print_color_only_tty;
 
 #define F(data, format) cprintf_to_char(data, cprintf_get_fmt_(data, format))
 #define T(data) F(data, NULL)
-#define cprintf_len(format, ...) (snprintf(NULL, 0, cprintf_regen_format(format), ##__VA_ARGS__) + 8)
-#define csprintf(string, format, ...)                              \
-	({                                                         \
-		int ret = 0;                                       \
-		if (format == NULL) {                              \
-			ret = sprintf(string, "%s", "(null)");     \
-		} else {                                           \
-			char *fmt = cprintf_regen_format(format);  \
-			ret = sprintf(string, fmt, ##__VA_ARGS__); \
-			cprintf_free_buf();                        \
-		}                                                  \
-		ret;                                               \
+#define cprintf_len(format, ...)                                                                    \
+	(snprintf(NULL, 0, cprintf_regen_format(format, CPRINTF_COUNT_ARGS(format, ##__VA_ARGS__)), \
+		  ##__VA_ARGS__) +                                                                  \
+	 8)
+// Count the number of arguments passed to the csprintf().
+#define CPRINTF_COUNT_ARGS_IMPL(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, COUNT, ...) \
+	_Generic((COUNT), int: COUNT, default: 0)
+#define CPRINTF_COUNT_ARGS(...)                                                                                 \
+	CPRINTF_COUNT_ARGS_IMPL(__VA_ARGS__, ((int)15), ((int)14), ((int)13), ((int)12), ((int)11), ((int)10),  \
+				((int)9), ((int)8), ((int)7), ((int)6), ((int)5), ((int)4), ((int)3), ((int)2), \
+				((int)1), ((int)0))
+#define csprintf(string, format, ...)                                                                        \
+	({                                                                                                   \
+		int ret = 0;                                                                                 \
+		if (format == NULL) {                                                                        \
+			ret = sprintf(string, "%s", "(null)");                                               \
+		} else {                                                                                     \
+			char *fmt = cprintf_regen_format(format, CPRINTF_COUNT_ARGS(format, ##__VA_ARGS__)); \
+			ret = sprintf(string, fmt, ##__VA_ARGS__);                                           \
+			cprintf_free_buf();                                                                  \
+		}                                                                                            \
+		ret;                                                                                         \
 	})
 #define cprintf(format, ...)                                            \
 	({                                                              \
@@ -132,6 +143,6 @@ extern bool cprintf_print_color_only_tty;
 		ret;                                                    \
 	})
 // For generic support.
-char *cprintf_regen_format(const char *f);
+char *cprintf_regen_format(const char *f, int limit);
 void cprintf_free_buf(void);
 void cprintf_mark_buf(char *b);

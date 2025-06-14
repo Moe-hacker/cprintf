@@ -17,6 +17,7 @@ cprintf("{}{}{}{}","xxxxx"); // Also boom!!!!!!
 printf("%s","xxxxx"); // Good!
 cprintf("{}","xxxxxx"); // Also good :)
 ```
+Update: cprintf can now recognise extra {} when running program when args of cprintf <= 15.      
 # About GNU C:
 cprintf uses GNU C11, port/cprintf.c is in pure C std.     
 # Let's make a colorful world!
