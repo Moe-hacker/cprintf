@@ -111,12 +111,12 @@ extern bool cprintf_print_color_only_tty;
 		b;                                        \
 	})
 
-#define cprintf_to_char(d, f)                                   \
-	({                                                      \
-		char *buf = malloc(cprintf_buf_len(f, d) + 32); \
-		sprintf(buf, f, d);                             \
-		cprintf_mark_buf(buf);                          \
-		buf;                                            \
+#define cprintf_to_char(d, f)                                      \
+	({                                                         \
+		char *cp_buf = malloc(cprintf_buf_len(f, d) + 32); \
+		sprintf(cp_buf, f, d);                             \
+		cprintf_mark_buf(cp_buf);                          \
+		cp_buf;                                            \
 	})
 
 #define F(data, format) cprintf_to_char(data, cprintf_get_fmt_(data, format))
@@ -134,33 +134,33 @@ extern bool cprintf_print_color_only_tty;
 				((int)1), ((int)0))
 #define csprintf(string, format, ...)                                                                        \
 	({                                                                                                   \
-		int ret = 0;                                                                                 \
+		int cp_ret = 0;                                                                              \
 		if (format == NULL) {                                                                        \
-			ret = sprintf(string, "%s", "(null)");                                               \
+			cp_ret = sprintf(string, "%s", "(null)");                                            \
 		} else {                                                                                     \
 			char *fmt = cprintf_regen_format(format, CPRINTF_COUNT_ARGS(format, ##__VA_ARGS__)); \
-			ret = sprintf(string, fmt, ##__VA_ARGS__);                                           \
+			cp_ret = sprintf(string, fmt, ##__VA_ARGS__);                                        \
 			cprintf_free_buf();                                                                  \
 		}                                                                                            \
-		ret;                                                                                         \
+		cp_ret;                                                                                      \
 	})
-#define cprintf(format, ...)                                            \
-	({                                                              \
-		int ret = 0;                                            \
-		char *buf = malloc(cprintf_len(format, ##__VA_ARGS__)); \
-		csprintf(buf, format, ##__VA_ARGS__);                   \
-		ret = cprintf__(buf);                                   \
-		free(buf);                                              \
-		ret;                                                    \
+#define cprintf(format, ...)                                               \
+	({                                                                 \
+		int cp_ret = 0;                                            \
+		char *cp_buf = malloc(cprintf_len(format, ##__VA_ARGS__)); \
+		csprintf(cp_buf, format, ##__VA_ARGS__);                   \
+		cp_ret = cprintf__(cp_buf);                                \
+		free(cp_buf);                                              \
+		cp_ret;                                                    \
 	})
-#define cfprintf(stream, format, ...)                                   \
-	({                                                              \
-		int ret = 0;                                            \
-		char *buf = malloc(cprintf_len(format, ##__VA_ARGS__)); \
-		csprintf(buf, format, ##__VA_ARGS__);                   \
-		ret = cfprintf__(stream, buf);                          \
-		free(buf);                                              \
-		ret;                                                    \
+#define cfprintf(stream, format, ...)                                      \
+	({                                                                 \
+		int cp_ret = 0;                                            \
+		char *cp_buf = malloc(cprintf_len(format, ##__VA_ARGS__)); \
+		csprintf(cp_buf, format, ##__VA_ARGS__);                   \
+		cp_ret = cfprintf__(stream, cp_buf);                       \
+		free(cp_buf);                                              \
+		cp_ret;                                                    \
 	})
 // For generic support.
 char *cprintf_regen_format(const char *f, int limit);
