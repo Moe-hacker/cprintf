@@ -25,8 +25,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- *
  */
+// NOLINTBEGIN
 #pragma once
 #ifdef __linux__
 #define _GNU_SOURCE
@@ -166,3 +166,4 @@ extern bool cprintf_print_color_only_tty;
 char *cprintf_regen_format(const char *f, int limit);
 void cprintf_free_buf(void);
 void cprintf_mark_buf(char *b);
+// NOLINTEND
