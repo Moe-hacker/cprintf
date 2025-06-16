@@ -55,8 +55,28 @@
 #define CPRINTF_MINOR 0
 int cprintf__(const char *_Nonnull buf);
 int cfprintf__(FILE *_Nonnull stream, const char *_Nonnull buf);
-// The `base` color.
-extern char *cprintf_base_color;
+// Color support.
+struct CPRINTF_COLOR {
+	char *base;
+	char *red_fg;
+	char *green_fg;
+	char *yellow_fg;
+	char *blue_fg;
+	char *purple_fg;
+	char *cyan_fg;
+	char *white_fg;
+	char *black_fg;
+	char *red_bg;
+	char *green_bg;
+	char *yellow_bg;
+	char *blue_bg;
+	char *purple_bg;
+	char *cyan_bg;
+	char *white_bg;
+	char *black_bg;
+};
+extern struct CPRINTF_COLOR cprintf_color;
+#define cprintf_base_color cprintf_color.base
 // Do not print color if the stream is a FIFO.
 extern bool cprintf_print_color_only_tty;
 

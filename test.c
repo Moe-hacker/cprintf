@@ -101,4 +101,6 @@ int main(void)
 	cprintf("END\n");
 	cprintf("{}{}{}\n");
 	cprintf("{}{}{}{}{}{}{}\n", "x", T(1));
+	cprintf("{red}red{green}green{blue}blue{yellow}yellow{purple}purple{cyan}cyan{white}white{black}black{clear}\n");
+	cprintf("[red]red[green]green[blue]blue[yellow]yellow[purple]purple[cyan]cyan[white]white[black]black[clear]\n");
 }

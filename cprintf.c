@@ -108,7 +108,25 @@ char *cprintf_regen_format(const char *f, int limit)
 //
 // Color support.
 //
-char *cprintf_base_color = "254;228;208";
+struct CPRINTF_COLOR cprintf_color = {
+	.base = "254;228;208",
+	.black_fg = "\033[30m",
+	.red_fg = "\033[31m",
+	.green_fg = "\033[32m",
+	.yellow_fg = "\033[33m",
+	.blue_fg = "\033[34m",
+	.purple_fg = "\033[35m",
+	.cyan_fg = "\033[36m",
+	.white_fg = "\033[37m",
+	.black_bg = "\033[40m",
+	.red_bg = "\033[41m",
+	.green_bg = "\033[42m",
+	.yellow_bg = "\033[43m",
+	.blue_bg = "\033[44m",
+	.purple_bg = "\033[45m",
+	.cyan_bg = "\033[46m",
+	.white_bg = "\033[47m",
+};
 bool cprintf_print_color_only_tty = true;
 #define fprintf_only_tty(stream, ...)                                                               \
 	{                                                                                           \
@@ -201,23 +219,23 @@ static const char *cfprintf_print_fg_color(FILE *_Nonnull stream, const char *_N
 	if (strcmp(color, "{clear}") == 0) {
 		fprintf_only_tty(stream, "\033[0m");
 	} else if (strcmp(color, "{black}") == 0) {
-		fprintf_only_tty(stream, "\033[30m");
+		fprintf_only_tty(stream, cprintf_color.black_fg);
 	} else if (strcmp(color, "{red}") == 0) {
-		fprintf_only_tty(stream, "\033[31m");
+		fprintf_only_tty(stream, cprintf_color.red_fg);
 	} else if (strcmp(color, "{green}") == 0) {
-		fprintf_only_tty(stream, "\033[32m");
+		fprintf_only_tty(stream, cprintf_color.green_fg);
 	} else if (strcmp(color, "{yellow}") == 0) {
-		fprintf_only_tty(stream, "\033[33m");
+		fprintf_only_tty(stream, cprintf_color.yellow_fg);
 	} else if (strcmp(color, "{blue}") == 0) {
-		fprintf_only_tty(stream, "\033[34m");
+		fprintf_only_tty(stream, cprintf_color.blue_fg);
 	} else if (strcmp(color, "{purple}") == 0) {
-		fprintf_only_tty(stream, "\033[35m");
+		fprintf_only_tty(stream, cprintf_color.purple_fg);
 	} else if (strcmp(color, "{cyan}") == 0) {
-		fprintf_only_tty(stream, "\033[36m");
+		fprintf_only_tty(stream, cprintf_color.cyan_fg);
 	} else if (strcmp(color, "{white}") == 0) {
-		fprintf_only_tty(stream, "\033[37m");
+		fprintf_only_tty(stream, cprintf_color.white_fg);
 	} else if (strcmp(color, "{base}") == 0) {
-		fprintf_only_tty(stream, "\033[1;38;2;%sm", cprintf_base_color);
+		fprintf_only_tty(stream, "\033[1;38;2;%sm", cprintf_color.base);
 	} else if (strcmp(color, "{underline}") == 0) {
 		fprintf_only_tty(stream, "\033[4m");
 	} else if (strcmp(color, "{highlight}") == 0) {
@@ -253,23 +271,23 @@ static const char *cfprintf_print_bg_color(FILE *_Nonnull stream, const char *_N
 	if (strcmp(color, "[clear]") == 0) {
 		fprintf_only_tty(stream, "\033[0m");
 	} else if (strcmp(color, "[black]") == 0) {
-		fprintf_only_tty(stream, "\033[40m");
+		fprintf_only_tty(stream, cprintf_color.black_bg);
 	} else if (strcmp(color, "[red]") == 0) {
-		fprintf_only_tty(stream, "\033[41m");
+		fprintf_only_tty(stream, cprintf_color.red_bg);
 	} else if (strcmp(color, "[green]") == 0) {
-		fprintf_only_tty(stream, "\033[42m");
+		fprintf_only_tty(stream, cprintf_color.green_bg);
 	} else if (strcmp(color, "[yellow]") == 0) {
-		fprintf_only_tty(stream, "\033[43m");
+		fprintf_only_tty(stream, cprintf_color.yellow_bg);
 	} else if (strcmp(color, "[blue]") == 0) {
-		fprintf_only_tty(stream, "\033[44m");
+		fprintf_only_tty(stream, cprintf_color.blue_bg);
 	} else if (strcmp(color, "[purple]") == 0) {
-		fprintf_only_tty(stream, "\033[45m");
+		fprintf_only_tty(stream, cprintf_color.purple_bg);
 	} else if (strcmp(color, "[cyan]") == 0) {
-		fprintf_only_tty(stream, "\033[46m");
+		fprintf_only_tty(stream, cprintf_color.cyan_bg);
 	} else if (strcmp(color, "[white]") == 0) {
-		fprintf_only_tty(stream, "\033[47m");
+		fprintf_only_tty(stream, cprintf_color.white_bg);
 	} else if (strcmp(color, "[base]") == 0) {
-		fprintf_only_tty(stream, "\033[1;48;2;%sm", cprintf_base_color);
+		fprintf_only_tty(stream, "\033[1;48;2;%sm", cprintf_color.base);
 	} else if (strcmp(color, "[underline]") == 0) {
 		fprintf_only_tty(stream, "\033[4m");
 	} else if (strcmp(color, "[highlight]") == 0) {
