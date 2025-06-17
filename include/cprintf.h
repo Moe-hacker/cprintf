@@ -167,6 +167,20 @@ extern bool cprintf_print_color_only_tty;
 		free(cfp_buf__);                                                \
 		cfp_ret__;                                                      \
 	})
+#define scprintf(format, ...)                                                                  \
+	{                                                                                      \
+		char *cp_buf__ = malloc((size_t)snprintf(NULL, 0, format, ##__VA_ARGS__) + 1); \
+		sprintf(cp_buf__, format, ##__VA_ARGS__);                                      \
+		cprintf__(cp_buf__);                                                           \
+		free(cp_buf__);                                                                \
+	}
+#define scfprintf(stream, format, ...)                                                          \
+	{                                                                                       \
+		char *cfp_buf__ = malloc((size_t)snprintf(NULL, 0, format, ##__VA_ARGS__) + 1); \
+		sprintf(cfp_buf__, format, ##__VA_ARGS__);                                      \
+		cfprintf__(stream, cfp_buf__);                                                  \
+		free(cfp_buf__);                                                                \
+	}
 // For generic support.
 char *cprintf_regen_format__(const char *f, int limit);
 void cprintf_free_buf__(void);
