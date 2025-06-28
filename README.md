@@ -1,3 +1,5 @@
+# Full specification:
+[SPECIFICATION](SPEC.md)
 # New in v2.0:
 Say hello to `T()` `F()` macro with _Generic() support!      
 Usage:
